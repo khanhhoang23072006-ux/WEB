@@ -31,34 +31,44 @@
 
   let isMouseDown = false;
 
-  window.addEventListener('mousedown', (e) => {
+  function handlePointerDown(x, y) {
     isMouseDown = true;
     // Tap Effect: Spawn particles
     for (let i = 0; i < 8; i++) {
       let angle = (i / 8) * Math.PI * 2 + (Math.random() * 0.5);
       let speed = Math.random() * 3 + 2;
       particles.push({
-        x: e.clientX,
-        y: e.clientY,
+        x: x,
+        y: y,
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed,
         life: 25,
         maxLife: 25
       });
     }
-  });
+  }
 
-  window.addEventListener('mouseup', () => {
-    isMouseDown = false;
-  });
-  
-  window.addEventListener('mouseleave', () => {
-    isMouseDown = false;
-  });
-
+  // Mouse Events
+  window.addEventListener('mousedown', (e) => handlePointerDown(e.clientX, e.clientY));
+  window.addEventListener('mouseup', () => isMouseDown = false);
+  window.addEventListener('mouseleave', () => isMouseDown = false);
   window.addEventListener('mousemove', (e) => {
     if (isMouseDown) {
       points.push({ x: e.clientX, y: e.clientY, life: maxLife });
+    }
+  });
+
+  // Touch Events
+  window.addEventListener('touchstart', (e) => {
+    if (e.touches.length > 0) {
+      handlePointerDown(e.touches[0].clientX, e.touches[0].clientY);
+    }
+  });
+  window.addEventListener('touchend', () => isMouseDown = false);
+  window.addEventListener('touchcancel', () => isMouseDown = false);
+  window.addEventListener('touchmove', (e) => {
+    if (isMouseDown && e.touches.length > 0) {
+      points.push({ x: e.touches[0].clientX, y: e.touches[0].clientY, life: maxLife });
     }
   });
 

@@ -78,6 +78,8 @@ body {
   cursor: url('../img/cursor-tap.png') 10 4, auto;
   user-select: none;
   -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
   
   /* === GAMING BACKGROUND === */
   background-image: url('../img/gaming_bg.jpg');
@@ -796,8 +798,18 @@ main.container { padding-bottom: 6rem; }
   .stats-grid { grid-template-columns: 1fr 1fr; }
   .dashboard-header { flex-direction: column; gap: 1rem; text-align: center; }
   .dashboard-header h1 { font-size: 2.4rem; }
-  .filter-row { gap: 0.35rem; }
-  .filter-chip { font-size: 0.75rem; padding: 0.25rem 0.6rem; }
+  .filter-row { gap: 0.35rem; justify-content: center; }
+  .filter-chip { font-size: 0.75rem; padding: 0.4rem 0.8rem; }
+  
+  .btn { padding: 0.8rem 1.2rem; font-size: 1.3rem; }
+  .modal { padding: 1rem; }
+  .modal-title { font-size: 2rem; }
+  
+  .team-avatar { width: 44px; height: 44px; font-size: 1.4rem; }
+  .team-name { font-size: 1.3rem; padding: 0 0.5rem; }
+  
+  .score-input { width: 60px; height: 50px; font-size: 2rem; }
+  .score-team-emoji { font-size: 2rem; }
 }
 
 /* ============================================================

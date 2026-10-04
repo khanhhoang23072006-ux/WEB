@@ -2,8 +2,15 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>⚔️ ARENA - Nền tảng Giải đấu Mini</title>
+
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#0d0d1a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ARENA">
+  <link rel="manifest" href="manifest.json">
 
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" type="image/jpeg" href="img/favicon.jpg">
@@ -82,6 +89,21 @@
   <script src="js/ui.js"></script>
   <script src="js/app.js"></script>
   <script src="js/cursor-effect.js"></script>
+  
+  <!-- PWA Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(registration => {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          })
+          .catch(err => {
+            console.log('ServiceWorker registration failed: ', err);
+          });
+      });
+    }
+  </script>
 
 </body>
 </html>
