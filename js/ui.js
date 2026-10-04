@@ -1089,7 +1089,7 @@ const UI = (() => {
       resultDiv.innerHTML = `
         <span>🎉 ${_renderAvatar(winner)} ${_esc(winner.name)} 🎉</span>
         <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
-          <button class="btn btn-danger btn-sm" onclick="UI._wheelAction('remove', '${winner.id}')">❌ Loại khỏi vòng</button>
+          <button class="btn btn-green btn-sm" onclick="UI._wheelAction('remove', '${winner.id}')">✅ Thêm vào lịch thi đấu</button>
           <button class="btn btn-yellow btn-sm" onclick="UI._wheelAction('keep')">🔄 Giữ lại</button>
         </div>
       `;
@@ -1110,7 +1110,7 @@ const UI = (() => {
   function _wheelAction(action, teamId) {
     if (action === 'remove' && teamId) {
       _wheelExcludedTeams.push(teamId);
-      showToast('Đã loại khỏi vòng quay', 'success');
+      showToast('Đã thêm vào lịch và xóa khỏi vòng quay', 'success');
     }
     const tournament = Storage.getById(window._currentTournamentId);
     if(tournament) _renderTabContent(tournament);
