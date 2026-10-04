@@ -65,7 +65,7 @@
     -1px  0px 0 var(--stroke-color),  1px  0px 0 var(--stroke-color);
   
   --font-header: 'SVN-Whimsy', cursive, sans-serif;
-  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-body: 'SVN-Whimsy', cursive, sans-serif;
   
   --border-width: 4px;
 }
@@ -83,9 +83,11 @@ body {
   -webkit-user-select: none;
   -webkit-touch-callout: none;
   touch-action: manipulation;
+  -webkit-text-stroke: 0;
+  text-shadow: var(--text-outline);
   
   /* === GAMING BACKGROUND === */
-  background-image: url('../img/gaming_bg.jpg');
+  background-image: url('../img/bg.gif');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;

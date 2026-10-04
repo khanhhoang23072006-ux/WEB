@@ -389,6 +389,7 @@ const UI = (() => {
                 <div class="form-group">
                   <label class="form-label board-label">Hình nền (Background)</label>
                   <input type="file" id="t-bg-file" accept="image/*" class="form-input board-input" style="padding:0.5rem;">
+                  ${t.bgBase64 ? `<small style="color: var(--bs-yellow); display:block; margin-top:0.3rem;">✅ Đang dùng nền tùy chỉnh — <button type="button" onclick="UI._clearBackground()" style="background:none;border:none;color:#ff4444;cursor:pointer;text-decoration:underline;font-size:0.8rem;">Xóa nền (Dùng mặc định)</button></small>` : '<small style="color: rgba(255,255,255,0.5); display:block; margin-top:0.3rem;">Dùng nền mặc định</small>'}
                 </div>
                 <div class="form-group">
                   <label class="form-label board-label">Font Tiêu đề H1/H2 (TTF/OTF/WOFF)</label>
@@ -628,6 +629,14 @@ const UI = (() => {
     theme.bodyFontBase64 = '';
     ThemeManager.saveTheme(theme);
     UI.showToast('Đã xóa font body!', 'success');
+    setTimeout(() => UI.renderAdminTheme(), 300);
+  }
+
+  function _clearBackground() {
+    const theme = ThemeManager.getTheme();
+    theme.bgBase64 = '';
+    ThemeManager.saveTheme(theme);
+    UI.showToast('Đã xóa hình nền tùy chỉnh!', 'success');
     setTimeout(() => UI.renderAdminTheme(), 300);
   }
 
@@ -2117,6 +2126,11 @@ const UI = (() => {
               <button class="btn btn-blue" style="flex: 1;" onclick="UI._openDepositModal()">💎 NẠP TIỀN</button>
               <button class="btn btn-danger" style="flex: 1;" onclick="UI._handleLogout()">🚪 ĐĂNG XUẤT</button>
             </div>
+            ${user.role === 'admin' ? `
+            <div style="margin-top: 1rem;">
+              <a href="#/admin-theme" class="btn btn-special" style="width: 100%; text-align: center; display: block; font-size: 1.3rem; padding: 0.8rem; background: linear-gradient(180deg, #ff9500 0%, #d35400 100%);">🎨 TÙY CHỈNH GIAO DIỆN (ADMIN)</a>
+            </div>
+            ` : ''}
             
           </div>
         </div>
@@ -2409,6 +2423,7 @@ const UI = (() => {
     _clearMainFont,
     _clearH3Font,
     _clearBodyFont,
+    _clearBackground,
     _selectFormat,
     _handleCreateTournament,
     _handleLogoUpload,
