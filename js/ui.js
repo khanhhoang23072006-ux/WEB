@@ -879,6 +879,7 @@ const UI = (() => {
           <button class="tab ${_activeTab === 'teams' ? 'active' : ''}" onclick="UI._switchTab('teams', '${id}')">⚔️ ĐỘI TUYỂN (${tournament.teams.length})</button>
           <button class="tab ${_activeTab === 'wheel' ? 'active' : ''}" onclick="UI._switchTab('wheel', '${id}')">🎰 BỐC THĂM</button>
           <button class="tab ${_activeTab === 'schedule' ? 'active' : ''}" onclick="UI._switchTab('schedule', '${id}')" ${tournament.status === 'draft' ? 'disabled style="opacity:0.3;cursor:not-allowed"' : ''}>📋 LỊCH ĐẤU</button>
+          ${tournament.format === 'group_stage' ? `<button class="tab ${_activeTab === 'knockout' ? 'active' : ''}" onclick="UI._switchTab('knockout', '${id}')" ${tournament.status === 'draft' ? 'disabled style="opacity:0.3;cursor:not-allowed"' : ''}>🔥 LOẠI TRỰC TIẾP</button>` : ''}
           <button class="tab ${_activeTab === 'standings' ? 'active' : ''}" onclick="UI._switchTab('standings', '${id}')" ${tournament.status === 'draft' ? 'disabled style="opacity:0.3;cursor:not-allowed"' : ''}>📊 BXH</button>
         </div>
 
@@ -924,6 +925,9 @@ const UI = (() => {
         break;
       case 'schedule':
         container.innerHTML = _renderScheduleTab(tournament);
+        break;
+      case 'knockout':
+        container.innerHTML = _renderKnockoutTab(tournament);
         break;
       case 'standings':
         container.innerHTML = _renderStandingsTab(tournament);
@@ -1401,20 +1405,23 @@ const UI = (() => {
       `;
     });
 
-    const knockoutMatches = tournament.matches.filter(m => !m.group);
-    if (knockoutMatches.length > 0) {
-      const fakeTournament = { ...tournament, matches: knockoutMatches };
-      html += `
-        <div class="group-section" style="margin-top: 3rem;">
-          <div class="group-title" style="text-align: center; margin-bottom: 1.5rem;">
-            <span class="group-badge" style="background: var(--neon-magenta); color: #fff; font-size: 1.5rem; padding: 0.5rem 1.5rem;">🔥 VÒNG LOẠI TRỰC TIẾP 🔥</span>
-          </div>
-          ${_renderBracketView(fakeTournament)}
-        </div>
-      `;
-    }
-
     return html;
+  }
+
+  // Knockout Tab
+  function _renderKnockoutTab(tournament) {
+    const knockoutMatches = tournament.matches.filter(m => !m.group);
+    if (!knockoutMatches.length) return '<p class="text-muted">Chưa có lịch thi đấu vòng loại</p>';
+
+    const fakeTournament = { ...tournament, matches: knockoutMatches };
+    return `
+      <div class="animate-in">
+        <div style="text-align: center; margin-bottom: 2rem; margin-top: 1rem;">
+          <span class="group-badge" style="background: var(--neon-magenta); color: #fff; font-size: 1.8rem; padding: 0.75rem 2rem; box-shadow: 0 0 20px rgba(255, 0, 255, 0.4);">🔥 VÒNG LOẠI TRỰC TIẾP 🔥</span>
+        </div>
+        ${_renderBracketView(fakeTournament)}
+      </div>
+    `;
   }
 
   // Individual Match Card
