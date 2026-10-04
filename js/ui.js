@@ -1401,6 +1401,19 @@ const UI = (() => {
       `;
     });
 
+    const knockoutMatches = tournament.matches.filter(m => !m.group);
+    if (knockoutMatches.length > 0) {
+      const fakeTournament = { ...tournament, matches: knockoutMatches };
+      html += `
+        <div class="group-section" style="margin-top: 3rem;">
+          <div class="group-title" style="text-align: center; margin-bottom: 1.5rem;">
+            <span class="group-badge" style="background: var(--neon-magenta); color: #fff; font-size: 1.5rem; padding: 0.5rem 1.5rem;">🔥 VÒNG LOẠI TRỰC TIẾP 🔥</span>
+          </div>
+          ${_renderBracketView(fakeTournament)}
+        </div>
+      `;
+    }
+
     return html;
   }
 
