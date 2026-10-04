@@ -111,6 +111,12 @@ const TournamentManager = (() => {
         const result = Bracket.generateGroupStage(tournament.teams, tournament.numGroups);
         tournament.matches = result.matches;
         tournament.groups = result.groups;
+        
+        // Generate empty knockout matches at the start so the bracket is visible immediately
+        const numGroups = tournament.groups ? tournament.groups.length : 2;
+        const emptyTeams = new Array(numGroups * 2).fill(null);
+        const koMatches = Bracket.generateSingleElimination(emptyTeams, tournament.matches.length + 1, true);
+        tournament.matches.push(...koMatches);
         break;
       }
     }
@@ -170,36 +176,7 @@ const TournamentManager = (() => {
       }
 
       if (tournament.format === 'group_stage') {
-        const groupMatches = tournament.matches.filter(m => m.group);
-        const koMatches = tournament.matches.filter(m => !m.group);
-        const allGroupDone = groupMatches.every(m => m.status === 'completed');
-        
-        if (allGroupDone && koMatches.length === 0) {
-          // Transition to Knockout Stage! (Top 2 from each group)
-          const groupStandings = getGroupStandings(tournament);
-          const topSeeds = [];
-          const secondSeeds = [];
-          
-          Object.values(groupStandings).forEach(standings => {
-            if (standings.length > 0) topSeeds.push(tournament.teams.find(t => t.id === standings[0].teamId));
-            if (standings.length > 1) secondSeeds.push(tournament.teams.find(t => t.id === standings[1].teamId));
-          });
-          
-          const advancingTeams = [];
-          for (let i = 0; i < topSeeds.length; i++) {
-            if (topSeeds[i]) advancingTeams.push(topSeeds[i]);
-            const opponentIdx = (i + 1) % Math.max(secondSeeds.length, 1);
-            if (secondSeeds[opponentIdx]) advancingTeams.push(secondSeeds[opponentIdx]);
-          }
-          
-          if (advancingTeams.length > 1) {
-            const newMatches = Bracket.generateSingleElimination(advancingTeams, tournament.matches.length + 1, true);
-            tournament.matches.push(...newMatches);
-          } else {
-            tournament.status = 'completed';
-            tournament.champion = advancingTeams[0]?.id;
-          }
-        }
+        _syncGroupToKnockout(tournament);
       } else if (tournament.format === 'round_robin') {
         // Check if all matches are complete
         const allDone = tournament.matches.every(m => m.status === 'completed');
@@ -231,12 +208,6 @@ const TournamentManager = (() => {
     // For Knockout, need to clear downstream matches
     if (isKnockout && match.nextMatchId) {
       _clearDownstream(tournament.matches, match);
-    } else if (tournament.format === 'group_stage' && match.group) {
-      // If we reset a group match, delete all knockout matches because standings might change
-      const koMatches = tournament.matches.filter(m => !m.group);
-      if (koMatches.length > 0) {
-        tournament.matches = tournament.matches.filter(m => m.group);
-      }
     }
 
     match.score1 = null;
@@ -246,6 +217,10 @@ const TournamentManager = (() => {
 
     tournament.status = 'in_progress';
     tournament.champion = null;
+    
+    if (tournament.format === 'group_stage' && match.group) {
+      _syncGroupToKnockout(tournament);
+    }
 
     Storage.save(tournament);
     return true;
@@ -302,6 +277,53 @@ const TournamentManager = (() => {
       result[group.name] = Bracket.calculateStandings(groupMatches, groupTeams);
     });
     return result;
+  }
+
+  function _syncGroupToKnockout(tournament) {
+    if (tournament.format !== 'group_stage') return;
+    
+    let koMatches = tournament.matches.filter(m => !m.group);
+    const numGroups = tournament.groups ? tournament.groups.length : 2;
+    
+    // Generate empty if missing (backward compatibility)
+    if (koMatches.length === 0) {
+      const emptyTeams = new Array(numGroups * 2).fill(null);
+      koMatches = Bracket.generateSingleElimination(emptyTeams, tournament.matches.length + 1, true);
+      tournament.matches.push(...koMatches);
+    }
+    
+    const groupStandings = getGroupStandings(tournament);
+    const topSeeds = [];
+    const secondSeeds = [];
+    
+    Object.values(groupStandings).forEach(standings => {
+      topSeeds.push(standings.length > 0 ? tournament.teams.find(t => t.id === standings[0].teamId) : null);
+      secondSeeds.push(standings.length > 1 ? tournament.teams.find(t => t.id === standings[1].teamId) : null);
+    });
+    
+    const advancingTeams = [];
+    for (let i = 0; i < numGroups; i++) {
+      advancingTeams.push(topSeeds[i] || null);
+      const opponentIdx = (i + 1) % Math.max(numGroups, 1);
+      advancingTeams.push(secondSeeds[opponentIdx] || null);
+    }
+    
+    const round1Matches = koMatches.filter(m => m.round === 1).sort((a, b) => a.position - b.position);
+    round1Matches.forEach((m, idx) => {
+       m.team1Id = advancingTeams[idx * 2] ? advancingTeams[idx * 2].id : null;
+       m.team2Id = advancingTeams[idx * 2 + 1] ? advancingTeams[idx * 2 + 1].id : null;
+    });
+    
+    // Update tournament status
+    const maxRound = Math.max(...koMatches.map(m => m.round));
+    const finalMatch = koMatches.find(m => m.round === maxRound);
+    if (finalMatch && finalMatch.status === 'completed' && finalMatch.winnerId) {
+      tournament.status = 'completed';
+      tournament.champion = finalMatch.winnerId;
+    } else {
+      tournament.status = 'in_progress';
+      tournament.champion = null;
+    }
   }
 
   // ── Delete ──────────────────────────────────────────────────

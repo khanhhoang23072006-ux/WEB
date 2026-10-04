@@ -1456,9 +1456,11 @@ const UI = (() => {
   function _renderTeamSelect(match, tournament, teamSlot) {
     const t = match[`team${teamSlot}Id`] ? _getTeamById(tournament, match[`team${teamSlot}Id`]) : null;
     
-    // Only Admin can edit, and only pending matches of ROUND 1
-    // Inner rounds (> 1) are strictly auto-filled by advancing winners.
-    if (!Auth.isAdmin() || match.status !== 'pending' || match.round > 1) {
+    // Only Admin can edit, and only pending matches of ROUND 1 in normal SE.
+    // Inner rounds (> 1) are strictly auto-filled.
+    // If it's a Group Stage tournament, ALL knockout matches are auto-filled, so disable dropdowns completely.
+    const isGroupKnockout = tournament.format === 'group_stage' && !match.group;
+    if (!Auth.isAdmin() || match.status !== 'pending' || match.round > 1 || isGroupKnockout) {
       return `<span class="bracket-team-name match-team-name" style="display:flex;align-items:center;gap:4px;">${t ? `${_renderAvatar(t)} ${_esc(t.name)}` : '???'}</span>`;
     }
 
