@@ -296,9 +296,18 @@ const TournamentManager = (() => {
     const topSeeds = [];
     const secondSeeds = [];
     
-    Object.values(groupStandings).forEach(standings => {
-      topSeeds.push(standings.length > 0 ? tournament.teams.find(t => t.id === standings[0].teamId) : null);
-      secondSeeds.push(standings.length > 1 ? tournament.teams.find(t => t.id === standings[1].teamId) : null);
+    Object.keys(groupStandings).forEach((groupName) => {
+      const standings = groupStandings[groupName];
+      const groupMatches = tournament.matches.filter(m => m.group === groupName);
+      const isGroupDone = groupMatches.length > 0 && groupMatches.every(m => m.status === 'completed');
+      
+      if (isGroupDone) {
+        topSeeds.push(standings.length > 0 ? tournament.teams.find(t => t.id === standings[0].teamId) : null);
+        secondSeeds.push(standings.length > 1 ? tournament.teams.find(t => t.id === standings[1].teamId) : null);
+      } else {
+        topSeeds.push(null);
+        secondSeeds.push(null);
+      }
     });
     
     const advancingTeams = [];
