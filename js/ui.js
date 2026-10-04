@@ -93,16 +93,19 @@ const UI = (() => {
 
         <!-- Filter + Sort -->
         <div class="filter-row">
-          <button class="filter-chip ${_filterStatus==='all'?'active':''}"      onclick="UI._setFilter('all')">🎮 Tất cả (${all.length})</button>
-          <button class="filter-chip chip-live  ${_filterStatus==='in_progress'?'active':''}" onclick="UI._setFilter('in_progress')">🔥 Live (${active})</button>
-          <button class="filter-chip chip-done  ${_filterStatus==='completed'?'active':''}"  onclick="UI._setFilter('completed')">🏆 Xong (${completed})</button>
-          <button class="filter-chip chip-draft ${_filterStatus==='draft'?'active':''}"      onclick="UI._setFilter('draft')">📝 Chuẩn bị (${draft})</button>
-          <select class="sort-select" onchange="UI._setSort(this.value)">
-            <option value="newest"  ${_sortBy==='newest'?'selected':''}>🕐 Mới nhất</option>
-            <option value="oldest"  ${_sortBy==='oldest'?'selected':''}>🕰️ Cũ nhất</option>
-            <option value="name"    ${_sortBy==='name'?'selected':''}>🔤 Tên A-Z</option>
-            <option value="teams"   ${_sortBy==='teams'?'selected':''}>⚔️ Nhiều đội</option>
-          </select>
+          <button class="btn ${_filterStatus==='all'?'btn-blue':'btn-grey'}" onclick="UI._setFilter('all')" style="padding: 0.4rem 0.8rem; font-size: 1rem;">🎮 Tất cả (${all.length})</button>
+          <button class="btn ${_filterStatus==='in_progress'?'btn-red':'btn-grey'}" onclick="UI._setFilter('in_progress')" style="padding: 0.4rem 0.8rem; font-size: 1rem;">🔥 Live (${active})</button>
+          <button class="btn ${_filterStatus==='completed'?'btn-yellow':'btn-grey'}" onclick="UI._setFilter('completed')" style="padding: 0.4rem 0.8rem; font-size: 1rem;">🏆 Xong (${completed})</button>
+          <button class="btn ${_filterStatus==='draft'?'btn-green':'btn-grey'}" onclick="UI._setFilter('draft')" style="padding: 0.4rem 0.8rem; font-size: 1rem;">📝 Chuẩn bị (${draft})</button>
+          
+          <div class="btn btn-primary" style="padding: 0; margin-left: auto; position: relative;">
+            <select onchange="UI._setSort(this.value)" style="background: transparent; border: none; padding: 0.4rem 0.8rem; font-size: 1rem; color: white; font-family: var(--font-header); font-weight: 800; outline: none; cursor: pointer; text-transform: uppercase;">
+              <option style="background: #1a1a2e;" value="newest"  ${_sortBy==='newest'?'selected':''}>🕐 Mới nhất</option>
+              <option style="background: #1a1a2e;" value="oldest"  ${_sortBy==='oldest'?'selected':''}>🕰️ Cũ nhất</option>
+              <option style="background: #1a1a2e;" value="name"    ${_sortBy==='name'?'selected':''}>🔤 Tên A-Z</option>
+              <option style="background: #1a1a2e;" value="teams"   ${_sortBy==='teams'?'selected':''}>⚔️ Nhiều đội</option>
+            </select>
+          </div>
         </div>
 
         <!-- Tournament List -->
@@ -118,29 +121,34 @@ const UI = (() => {
             <h1>⚔️ CHIẾN TRƯỜNG</h1>
             <p>Chinh phục mọi giải đấu · Trở thành huyền thoại</p>
           </div>
-          <a href="#/create" class="btn btn-green btn-lg">⚡ TẠO GIẢI ĐẤU</a>
+          <a href="#/create" class="btn btn-green text-3d-title" style="padding: 1.2rem 3rem;">TẠO GIẢI ĐẤU</a>
         </div>
 
-        <div class="stats-grid">
-          <div class="stat-card stat-card--blue">
-            <div class="stat-icon" style="background:none; box-shadow:none;"><div class="game-icon icon-5-1 game-icon-lg"></div></div>
-            <span class="stat-value">${all.length}</span>
-            <span class="stat-label">Giải đấu</span>
+        <div class="stats-grid-wrapper" style="position: relative;">
+          <div style="position: absolute; right: 0; top: -30px;">
+            <button class="btn btn-sm btn-icon" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: #fff; padding: 4px 8px; font-size: 0.8rem; cursor: pointer;" onclick="UI._cycleStatEffect()" title="Đổi hiệu ứng chữ">✨ Đổi Effect</button>
           </div>
-          <div class="stat-card stat-card--orange">
-            <div class="stat-icon" style="background:none; box-shadow:none;"><div class="game-icon icon-3-1 game-icon-lg"></div></div>
-            <span class="stat-value">${active}</span>
-            <span class="stat-label">Đang Live</span>
-          </div>
-          <div class="stat-card stat-card--yellow">
-            <div class="stat-icon" style="background:none; box-shadow:none;"><div class="game-icon icon-0-0 game-icon-lg"></div></div>
-            <span class="stat-value">${completed}</span>
-            <span class="stat-label">Hoàn thành</span>
-          </div>
-          <div class="stat-card stat-card--red">
-            <div class="stat-icon" style="background:none; box-shadow:none;"><div class="game-icon icon-5-0 game-icon-lg"></div></div>
-            <span class="stat-value">${all.reduce((s, t) => s + t.teams.length, 0)}</span>
-            <span class="stat-label">Đội tham chiến</span>
+          <div class="stats-grid">
+            <div class="stat-card stat-card--blue">
+              <div class="stat-icon sticker-icon">🎮</div>
+              <span class="stat-value">${all.length}</span>
+              <span class="stat-label">Giải đấu</span>
+            </div>
+            <div class="stat-card stat-card--orange">
+              <div class="stat-icon sticker-icon">🔥</div>
+              <span class="stat-value">${active}</span>
+              <span class="stat-label">Đang Live</span>
+            </div>
+            <div class="stat-card stat-card--yellow">
+              <div class="stat-icon sticker-icon">🏆</div>
+              <span class="stat-value">${completed}</span>
+              <span class="stat-label">Hoàn thành</span>
+            </div>
+            <div class="stat-card stat-card--red">
+              <div class="stat-icon sticker-icon">⚔️</div>
+              <span class="stat-value">${all.reduce((s, t) => s + t.teams.length, 0)}</span>
+              <span class="stat-label">Đội tham chiến</span>
+            </div>
           </div>
         </div>
 
@@ -1846,19 +1854,19 @@ const UI = (() => {
 
         <div class="stats-grid" style="margin-bottom:1.5rem">
           <div class="stat-card stat-card--blue">
-            <div class="stat-icon" style="font-size:2rem;width:auto;height:auto;background:none;box-shadow:none">🎮</div>
+            <div class="stat-icon sticker-icon">🎮</div>
             <span class="stat-value">${total}</span><span class="stat-label">Tổng giải đấu</span>
           </div>
           <div class="stat-card stat-card--orange">
-            <div class="stat-icon" style="font-size:2rem;width:auto;height:auto;background:none;box-shadow:none">🔥</div>
+            <div class="stat-icon sticker-icon">🔥</div>
             <span class="stat-value">${live}</span><span class="stat-label">Đang diễn ra</span>
           </div>
           <div class="stat-card stat-card--yellow">
-            <div class="stat-icon" style="font-size:2rem;width:auto;height:auto;background:none;box-shadow:none">⚔️</div>
+            <div class="stat-icon sticker-icon">⚔️</div>
             <span class="stat-value">${totalTeams}</span><span class="stat-label">Tổng đội</span>
           </div>
           <div class="stat-card stat-card--red">
-            <div class="stat-icon" style="font-size:2rem;width:auto;height:auto;background:none;box-shadow:none">📋</div>
+            <div class="stat-icon sticker-icon">📋</div>
             <span class="stat-value">${doneMatches}</span><span class="stat-label">Trận đã đấu</span>
           </div>
         </div>
@@ -2035,91 +2043,218 @@ const UI = (() => {
       return;
     }
 
-    const balanceStr = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(user.balance || 0);
-
+    const balanceStr = new Intl.NumberFormat('vi-VN').format(user.balance || 0);
+    const avatarSrc = user.avatar || 'img/icon-play.png';
+    
     getApp().innerHTML = `
       <div class="dashboard animate-in">
-        <div class="dashboard-header" style="justify-content:center;">
-          <h1>👤 HỒ SƠ CÁ NHÂN</h1>
-        </div>
-        
-        <div class="form-card" style="max-width: 500px; margin: 0 auto; text-align: center; padding: 2rem;">
-          <div style="font-size: 5rem; margin-bottom: 0.5rem; text-shadow: 0 4px 0 #141634;">${user.role === 'admin' ? '👑' : '👤'}</div>
-          <h2 style="font-size: 2.5rem; color: var(--bs-yellow); margin-bottom: 0.5rem;">${_esc(user.username)}</h2>
-          <span class="badge badge-format" style="margin-bottom: 1rem;">VAI TRÒ: ${user.role.toUpperCase()}</span>
-          
-          <div style="background: var(--bg-dark); padding: 1.5rem; border-radius: 8px; border: 2px solid var(--border-black); margin-bottom: 2rem; box-shadow: inset 0 4px 0 rgba(0,0,0,0.2);">
-            <div style="font-size: 1.2rem; color: white; font-family: var(--font-header); -webkit-text-stroke: var(--text-stroke-light);">SỐ DƯ TÀI KHOẢN</div>
-            <div style="font-size: 2.8rem; color: var(--bs-green); font-family: var(--font-header); -webkit-text-stroke: 1px #141634; text-shadow: 2px 2px 0 #141634; margin: 0.5rem 0;">
-              ${balanceStr}
+        <div class="brawl-profile-container" style="display: flex; height: 70vh; min-height: 480px; max-height: 650px; border-radius: 12px; overflow: visible; box-shadow: 0 10px 30px rgba(0,0,0,0.8); background: #262c5b; border: 4px solid #141634; margin: 0 auto; max-width: 900px; position: relative;">
+          <button onclick="window.location.hash='#/'" style="position: absolute; top: -15px; right: -15px; width: 44px; height: 44px; background: #e32636; border: 3px solid #141634; border-radius: 8px; color: white; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.3), 0 4px 0 #141634; z-index: 20; text-shadow: var(--text-outline); -webkit-text-stroke: 0; padding-bottom: 2px;">✖</button>
+          <!-- Left Side: Character / Big Avatar -->
+          <div style="flex: 1.2; background: linear-gradient(180deg, #00d2ff 0%, #3a7bd5 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 4px solid #141634; position: relative; border-radius: 8px 0 0 8px;">
+            <div style="font-family: var(--font-header); font-size: 2.5rem; position: absolute; top: 1rem; left: 1rem; color: white; -webkit-text-stroke: 0; text-shadow: var(--text-outline);">PROFILE</div>
+            
+            <!-- User can click this huge area or the avatar to upload an image -->
+            <div class="brawl-avatar-upload" onclick="document.getElementById('avatar-upload').click()" style="width: 250px; height: 250px; border-radius: 50%; border: 6px solid #141634; overflow: hidden; cursor: pointer; box-shadow: 0 10px 0 rgba(0,0,0,0.3); background: #141634; position: relative; display: flex; align-items: center; justify-content: center;">
+              <img id="profile-big-avatar" src="${avatarSrc}" style="width: 100%; height: 100%; object-fit: cover;">
+              <div style="position: absolute; bottom: 15px; background: rgba(0,0,0,0.7); color: white; padding: 5px 15px; border-radius: 20px; font-family: var(--font-header); font-size: 1.2rem;">📸 UPLOAD</div>
             </div>
-            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap;">
-              <button class="btn btn-blue" onclick="UI._openDepositModal()">💎 NẠP TIỀN</button>
-              <button class="btn btn-special" onclick="UI._openDonateModal()">💖 DONATE</button>
+            <input type="file" id="avatar-upload" accept="image/*" style="display:none;" onchange="UI._handleAvatarUpload(event)">
+            
+            <div style="margin-top: 2.5rem; background: #141634; color: white; padding: 0.5rem 2rem; border-radius: 20px; font-family: var(--font-header); font-size: 1.5rem; -webkit-text-stroke: 0; text-shadow: var(--text-outline);">
+              HỒ SƠ CỦA ${_esc(user.username)}
             </div>
           </div>
-          
-          <div style="text-align: left; margin-bottom: 2rem;">
-            <div class="form-group">
-              <label class="form-label board-label" style="font-size: 1.2rem;">Tên hiển thị</label>
-              <input type="text" id="prof-username" class="form-input board-input" value="${_esc(user.username)}">
+
+          <!-- Right Side: Stats -->
+          <div style="flex: 2; background: linear-gradient(180deg, #3c428e 0%, #292d64 100%); padding: 2rem; display: flex; flex-direction: column; position: relative; border-radius: 0 8px 8px 0;">
+            
+            <!-- Top row: Avatar + Name + Trophy -->
+            <div style="display: flex; gap: 1.5rem; align-items: center; margin-bottom: 2rem;">
+              <div style="width: 100px; height: 100px; border: 4px solid #141634; border-radius: 12px; overflow: hidden; background: #141634; flex-shrink: 0; box-shadow: inset 0 2px 0 rgba(255,255,255,0.4), 0 4px 0 #141634;">
+                <img id="profile-small-avatar" src="${avatarSrc}" style="width: 100%; height: 100%; object-fit: cover;">
+              </div>
+              
+              <div style="flex: 1;">
+                <!-- Editable Username -->
+                <div style="display: flex; align-items: center; gap: 0.5rem; background: #1f2345; padding: 0.4rem 1rem; border: 3px solid #141634; border-radius: 8px; margin-bottom: 0.5rem; box-shadow: inset 0 2px 0 rgba(255,255,255,0.1), 0 4px 0 #141634;">
+                  <span style="font-size: 1.6rem; filter: drop-shadow(0 2px 0 #141634); display: flex; align-items: center;">${user.role === 'admin' ? '👑' : '🪄'}</span>
+                  <input type="text" id="prof-username" value="${_esc(user.username)}" style="background: transparent; border: none; outline: none; color: white; font-family: var(--font-header); font-size: 1.8rem; width: 100%; -webkit-text-stroke:0; text-shadow: var(--text-outline); line-height: 1;">
+                  <button onclick="UI._handleUpdateProfileName()" style="background: #39e639; border: 2px solid #141634; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 0 #141634; flex-shrink: 0; padding-bottom: 2px;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; filter: drop-shadow(0 2px 0 rgba(0,0,0,0.3));"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  </button>
+                </div>
+                
+                <!-- Trophy Bar -->
+                <div style="background: linear-gradient(180deg, #ffdf00 0%, #ff9500 100%); border: 3px solid #141634; border-radius: 6px; padding: 0.2rem 1rem; display: flex; align-items: center; gap: 0.5rem; box-shadow: inset 0 2px 0 rgba(255,255,255,0.4), 0 4px 0 #141634;">
+                  <span style="font-size: 1.6rem; filter: drop-shadow(0 2px 0 rgba(0,0,0,0.6)); display: flex; align-items: center; justify-content: center; line-height: 1;">🏆</span>
+                  <span style="font-family: var(--font-header); font-size: 1.5rem; color: white; -webkit-text-stroke:0; text-shadow: var(--text-outline); display: flex; align-items: center; line-height: 1; padding-top: 2px;">${user.balance || 0} PTS</span>
+                </div>
+              </div>
             </div>
-            <div class="form-group">
-              <label class="form-label board-label" style="font-size: 1.2rem;">Mật khẩu mới (để trống nếu không đổi)</label>
-              <input type="password" id="prof-password" class="form-input board-input" placeholder="••••••••">
+            
+            <!-- Stats Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; margin-bottom: 2rem;">
+              ${_renderProfileStat('VAI TRÒ', '🛡️', user.role.toUpperCase())}
+              ${_renderProfileStat('GIẢI ĐÃ TẠO', '🏆', Storage.getAll().length)}
+              ${_renderProfileStat('ĐỘI ĐÃ THÊM', '⚔️', Storage.getAll().reduce((sum, t) => sum + t.teams.length, 0))}
+              ${_renderProfileStat('TRẬN HOÀN THÀNH', '💀', Storage.getAll().reduce((sum, t) => sum + t.matches.filter(m => m.status === 'completed').length, 0))}
+              ${_renderProfileStat('TỔNG BÀN THẮNG', '⚽', '3534')}
+              ${_renderProfileStat('NGÀY THAM GIA', '📅', 'Hôm nay')}
             </div>
-            <button class="btn btn-green" style="width: 100%;" onclick="UI._handleUpdateProfile()">💾 LƯU THAY ĐỔI</button>
+            
+            <!-- Club / Info -->
+            <div style="background: #1f2345; border: 3px solid #141634; border-radius: 8px; padding: 0.8rem 1rem; display: flex; align-items: center; gap: 1rem; margin-bottom: auto; box-shadow: 0 4px 0 #141634;">
+              <div style="font-size: 2.8rem; filter: drop-shadow(0 2px 0 #141634); display: flex; align-items: center; line-height: 1;">👑</div>
+              <div style="display: flex; flex-direction: column; justify-content: center;">
+                <div style="font-family: var(--font-header); font-size: 1.6rem; color: white; -webkit-text-stroke:0; text-shadow: var(--text-outline); line-height: 1;">Arena Club</div>
+                <div style="font-weight: bold; color: #8e8c95; font-size: 1.1rem; line-height: 1; margin-top: 0.3rem;">Thành viên ${user.role === 'admin' ? 'Sáng lập' : 'Cấp cao'}</div>
+              </div>
+            </div>
+            
+            <!-- Logout / Save buttons -->
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+              <button class="btn btn-blue" style="flex: 1;" onclick="UI._openDepositModal()">💎 NẠP TIỀN</button>
+              <button class="btn btn-danger" style="flex: 1;" onclick="UI._handleLogout()">🚪 ĐĂNG XUẤT</button>
+            </div>
+            
           </div>
-          
-          <button class="btn btn-danger btn-lg" style="width: 100%;" onclick="UI._handleLogout()">🚪 ĐĂNG XUẤT</button>
         </div>
       </div>
     `;
   }
 
-  function _handleUpdateProfile() {
-    const user = Auth.getCurrentUser();
-    if (!user) return;
-    const newUsername = document.getElementById('prof-username').value.trim();
-    const newPassword = document.getElementById('prof-password').value.trim();
+  function _renderProfileStat(title, icon, value) {
+    return `
+      <div style="text-align: center;">
+        <div style="font-family: var(--font-header); font-size: 0.85rem; color: white; -webkit-text-stroke:0; text-shadow: var(--text-outline); margin-bottom: 0.2rem; text-transform: uppercase;">${title}</div>
+        <div style="background: #141634; border-radius: 6px; padding: 0.35rem 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.4rem; box-shadow: inset 0 2px 0 rgba(255,255,255,0.1);">
+          <span style="font-size: 1.3rem; display: flex; align-items: center; line-height: 1; filter: drop-shadow(0 2px 0 rgba(0,0,0,0.8)); margin-bottom: 2px;">${icon}</span>
+          <span style="font-family: var(--font-header); font-size: 1.3rem; color: white; -webkit-text-stroke:0; text-shadow: var(--text-outline); display: flex; align-items: center; line-height: 1; padding-top: 2px;">${value}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  function _handleAvatarUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
     
+    // Check size limit (e.g., 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      showToast('Ảnh quá lớn, vui lòng chọn ảnh < 2MB', 'error');
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const base64 = e.target.result;
+      if (Auth.updateProfile({ avatar: base64 })) {
+        document.getElementById('profile-big-avatar').src = base64;
+        document.getElementById('profile-small-avatar').src = base64;
+        updateAuthUI();
+        showToast('Cập nhật ảnh đại diện thành công!', 'success');
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function _handleUpdateProfileName() {
+    const newUsername = document.getElementById('prof-username').value.trim();
     if (!newUsername) {
       showToast('Tên hiển thị không được để trống!', 'error');
       return;
     }
-    
-    const updates = { username: newUsername };
-    if (newPassword) updates.password = newPassword;
-    
-    if (Auth.updateProfile(updates)) {
-      showToast('Cập nhật hồ sơ thành công!', 'success');
+    if (Auth.updateProfile({ username: newUsername })) {
+      showToast('Đã lưu tên hiển thị mới!', 'success');
       updateAuthUI();
-      renderProfilePage();
+      // Render again to update top header if needed, but the input is already there
     } else {
-      showToast('Tên đăng nhập đã tồn tại!', 'error');
+      showToast('Lỗi cập nhật tên!', 'error');
     }
   }
 
   function _openDepositModal() {
     const html = `
-      <div class="modal-header">
-        <h2 class="modal-title" style="color: var(--bs-green);">💎 NẠP TIỀN</h2>
-        <button class="modal-close" onclick="UI.hideModal()">×</button>
+      <div class="modal-header" style="justify-content: center; border-bottom: none;">
+        <h2 class="modal-title" style="color: var(--bs-yellow); font-size: 2.2rem; -webkit-text-stroke: 1px #141634; text-shadow: 2px 3px 0 #141634;">💎 NẠP TIỀN</h2>
+        <button onclick="UI.hideModal()" style="position: absolute; top: -15px; right: -15px; width: 44px; height: 44px; background: #e32636; border: 3px solid #141634; border-radius: 8px; color: white; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.3), 0 4px 0 #141634; z-index: 20; text-shadow: var(--text-outline); -webkit-text-stroke: 0; padding-bottom: 2px;">✖</button>
       </div>
-      <div style="text-align: center; margin-bottom: 1.5rem;">
-        <p style="font-family: var(--font-body); font-weight: 700; margin-bottom: 1rem;">Quét mã QR bằng ứng dụng ngân hàng hoặc ví điện tử.</p>
-        <div style="background: white; padding: 1rem; border-radius: 12px; display: inline-block; border: 4px solid var(--border-black); margin-bottom: 1rem; box-shadow: var(--shadow-black);">
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=ARENA_DEPOSIT_DEMO" alt="QR Code" style="width: 200px; height: 200px; display: block;">
+      
+      <div class="brawl-scroll" style="max-height: 55vh; overflow-y: auto; padding-right: 0.5rem;">
+        <div style="text-align: center; margin-bottom: 0.5rem;">
+          
+          <!-- Khung 1: Chọn mệnh giá -->
+          <div style="background: linear-gradient(180deg, #00d2ff 0%, #3a7bd5 100%); padding: 1.2rem; border-radius: 12px; border: 4px solid #141634; box-shadow: inset 0 2px 0 rgba(255,255,255,0.1), 0 6px 0 #141634; margin-bottom: 1.5rem;">
+            <p style="font-family: var(--font-header); font-size: 1.3rem; color: white; -webkit-text-stroke: 0; text-shadow: var(--text-outline); margin-bottom: 1rem; text-transform: uppercase;">1. Chọn mệnh giá</p>
+            
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; margin-bottom: 1rem;">
+              <button class="btn btn-blue" onclick="UI._generateDepositQR(20000)">20K</button>
+              <button class="btn btn-blue" onclick="UI._generateDepositQR(50000)">50K</button>
+              <button class="btn btn-blue" onclick="UI._generateDepositQR(100000)">100K</button>
+              <button class="btn btn-blue" onclick="UI._generateDepositQR(200000)">200K</button>
+              <button class="btn btn-blue" onclick="UI._generateDepositQR(500000)">500K</button>
+            </div>
+
+            <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 1rem;">
+              <input type="number" id="deposit-custom-amount" class="form-input" placeholder="Nhập số khác..." style="max-width: 160px; text-align: center; font-family: var(--font-header); font-size: 1.2rem; margin: 0; border: 3px solid #141634;">
+              <button class="btn btn-green" onclick="UI._generateDepositQR(document.getElementById('deposit-custom-amount').value)">Tạo Mã</button>
+            </div>
+          </div>
+
+          <!-- Khung 2: Hiển thị QR -->
+          <div id="deposit-qr-container" style="display: none; background: linear-gradient(180deg, #3c428e 0%, #292d64 100%); padding: 1.2rem; border-radius: 12px; border: 4px solid var(--border-black); box-shadow: 0 6px 0 rgba(0,0,0,0.5); margin-left: auto; margin-right: auto; max-width: 300px; position: relative;">
+            <p style="font-family: var(--font-header); font-size: 1.3rem; color: var(--bs-yellow); -webkit-text-stroke: 0; text-shadow: var(--text-outline); margin-bottom: 1rem; text-transform: uppercase;">2. Quét mã QR</p>
+            
+            <div style="background: white; padding: 0.5rem; border-radius: 8px; display: inline-block; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);">
+              <img id="deposit-qr-image" src="" alt="QR Code Thanh Toán" style="width: 100%; max-width: 240px; height: auto; display: block; border-radius: 4px;">
+            </div>
+            
+            <div style="color: var(--bs-green); font-weight: bold; font-family: var(--font-header); margin-top: 1rem; font-size: 2.2rem; -webkit-text-stroke: 1px #141634; text-shadow: 2px 3px 0 #141634;" id="deposit-amount-text"></div>
+            
+            <button id="confirm-deposit-btn" class="btn btn-special" style="margin-top: 1rem; width: 100%; font-size: 1.2rem; padding: 0.8rem;" onclick="">XÁC NHẬN CHUYỂN KHOẢN</button>
+          </div>
+
         </div>
-        <p style="color: var(--bs-yellow); font-family: var(--font-header); font-size: 1.2rem; -webkit-text-stroke: var(--text-stroke-light);">(Giả lập: Hãy chọn số tiền muốn nạp)</p>
-      </div>
-      <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-        <button class="btn btn-blue" onclick="UI._handleDeposit(50000)">Nạp 50.000đ</button>
-        <button class="btn btn-blue" onclick="UI._handleDeposit(100000)">Nạp 100.000đ</button>
-        <button class="btn btn-blue" onclick="UI._handleDeposit(500000)">Nạp 500.000đ</button>
       </div>
     `;
     showModal(html);
+  }
+
+  function _generateDepositQR(amount) {
+    const num = parseInt(amount);
+    if (!num || num < 10000) {
+      showToast('Số tiền tối thiểu là 10.000đ!', 'error');
+      return;
+    }
+    
+    const user = Auth.getCurrentUser();
+    const username = user ? user.username : 'GUEST';
+    
+    // Config MB Bank info for VietQR
+    const BANK_ID = 'MB';
+    const ACCOUNT_NO = '11102372006';
+    const ACCOUNT_NAME = 'HOANG GIA KHANH';
+    
+    // Create addInfo
+    const cleanName = username.replace(/[^a-zA-Z0-9]/g, '');
+    const addInfo = `NAPTIEN${cleanName}`;
+    
+    // Generate dynamic QR using VietQR API
+    const qrUrl = `https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-compact2.jpg?amount=${num}&addInfo=${addInfo}&accountName=${encodeURIComponent(ACCOUNT_NAME)}`;
+    
+    document.getElementById('deposit-qr-image').src = qrUrl;
+    document.getElementById('deposit-qr-container').style.display = 'block';
+    
+    const moneyStr = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(num);
+    document.getElementById('deposit-amount-text').innerText = moneyStr;
+    
+    document.getElementById('confirm-deposit-btn').setAttribute('onclick', `UI._handleDeposit(${num})`);
+    
+    // Tự động cuộn xuống dưới cùng để thấy rõ QR code
+    setTimeout(() => {
+      document.getElementById('deposit-qr-container').scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }, 100);
   }
 
   function _handleDeposit(amount) {
@@ -2265,7 +2400,8 @@ const UI = (() => {
     _openAuthModal,
     _handleAuth,
     _handleLogout,
-    _handleUpdateProfile,
+    _handleAvatarUpload,
+    _handleUpdateProfileName,
     _handleSaveTheme,
     _selectThemeTarget,
     _updateThemePreview,
@@ -2298,6 +2434,7 @@ const UI = (() => {
     _clearFilters,
     _selectEmoji,
     _openDepositModal,
+    _generateDepositQR,
     _handleDeposit,
     _openDonateModal,
     _handleDonate,

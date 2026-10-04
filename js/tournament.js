@@ -10,7 +10,12 @@ const TournamentManager = (() => {
     '#a855f7', '#10b981', '#e11d48', '#0ea5e9', '#84cc16'
   ];
 
-  const TEAM_EMOJIS = [ '<div class="game-icon icon-0-0"></div>', '<div class="game-icon icon-1-0"></div>', '<div class="game-icon icon-2-0"></div>', '<div class="game-icon icon-3-0"></div>', '<div class="game-icon icon-4-0"></div>', '<div class="game-icon icon-5-0"></div>', '<div class="game-icon icon-0-1"></div>', '<div class="game-icon icon-1-1"></div>', '<div class="game-icon icon-2-1"></div>', '<div class="game-icon icon-3-1"></div>', '<div class="game-icon icon-4-1"></div>', '<div class="game-icon icon-5-1"></div>', '<div class="game-icon icon-0-2"></div>', '<div class="game-icon icon-1-2"></div>', '<div class="game-icon icon-2-2"></div>', '<div class="game-icon icon-3-2"></div>' ];
+  const TEAM_EMOJIS = [ 
+    '<div class="game-icon icon-0-0"></div>', '<div class="game-icon icon-1-0"></div>', '<div class="game-icon icon-2-0"></div>', '<div class="game-icon icon-3-0"></div>', '<div class="game-icon icon-4-0"></div>', '<div class="game-icon icon-5-0"></div>',
+    '<div class="game-icon icon-0-1"></div>', '<div class="game-icon icon-1-1"></div>', '<div class="game-icon icon-2-1"></div>', '<div class="game-icon icon-3-1"></div>', '<div class="game-icon icon-4-1"></div>', '<div class="game-icon icon-5-1"></div>',
+    '<div class="game-icon icon-0-2"></div>', '<div class="game-icon icon-1-2"></div>', '<div class="game-icon icon-2-2"></div>', '<div class="game-icon icon-3-2"></div>', '<div class="game-icon icon-4-2"></div>', '<div class="game-icon icon-5-2"></div>',
+    '<div class="game-icon icon-0-3"></div>', '<div class="game-icon icon-1-3"></div>', '<div class="game-icon icon-2-3"></div>', '<div class="game-icon icon-3-3"></div>', '<div class="game-icon icon-4-3"></div>', '<div class="game-icon icon-5-3"></div>'
+  ];
 
   function _randomColor(existingTeams) {
     const used = existingTeams.map(t => t.color);
