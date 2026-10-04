@@ -5,13 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>⚔️ ARENA - Nền tảng Giải đấu Mini</title>
 
-  <!-- Google Fonts: Sigmar (Display), Baloo 2 (Headers/Buttons), Nunito (Body) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;700;900&family=Sigmar&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="css/style.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚔️</text></svg>">
+  <link rel="icon" type="image/jpeg" href="img/favicon.jpg">
+  <link rel="apple-touch-icon" href="img/favicon.jpg">
 </head>
 <body>
 
@@ -21,11 +17,10 @@
 
   <!-- Navigation -->
   <nav class="navbar">
-    <a href="#/" class="nav-brand">⚔️ ARENA</a>
+    <a href="#/" class="nav-brand"><div class="game-icon icon-2-4 game-icon-sm"></div> ARENA</a>
     <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
     <div class="nav-links">
-      <a href="#/" class="nav-link active">🏠 HOME</a>
-      <a href="#/create" class="nav-link">⚡ TẠO GIẢI</a>
+      <div id="auth-section" style="display: inline-block; margin-left: 1rem;"></div>
     </div>
   </nav>
 
@@ -41,18 +36,53 @@
   <!-- Toast Container -->
   <div id="toast-container" class="toast-container"></div>
 
+  <!-- Bottom Navigation Bar -->
+  <nav class="bottom-nav" id="bottom-nav">
+    <a href="#/" class="bnav-item active" id="bnav-home">
+      <div class="bnav-icon">
+        <img src="img/icon-shop.png" alt="Home" style="width: 100%; height: 100%; object-fit: contain;">
+      </div>
+      <span>Trang chủ</span>
+    </a>
+    <a href="#/create" class="bnav-item" id="bnav-create" style="display:none;">
+      <div class="bnav-icon bnav-icon--main" style="border: none; background: transparent; padding: 0;">
+        <img src="img/icon-play.png" alt="Create" style="width: 130%; height: 130%; object-fit: contain; margin-top: -15%; margin-left: -15%;">
+      </div>
+      <span>Tạo giải</span>
+    </a>
+    <a href="#/stats" class="bnav-item" id="bnav-stats">
+      <div class="bnav-icon">
+        <img src="img/icon-deck.png" alt="Stats" style="width: 100%; height: 100%; object-fit: contain;">
+      </div>
+      <span>Thống kê</span>
+    </a>
+    <a href="#/search" class="bnav-item" id="bnav-search">
+      <div class="bnav-icon">
+        <img src="img/icon-portal.png" alt="Search" style="width: 100%; height: 100%; object-fit: contain;">
+      </div>
+      <span>Tìm kiếm</span>
+    </a>
+  </nav>
+
   <!-- Scripts -->
   <script>
     window.onerror = function(msg, url, lineNo, columnNo, error) {
-      alert("Error: " + msg + "\nLine: " + lineNo);
+      console.error("JS Error:", msg, "Line:", lineNo, "Col:", columnNo);
       return false;
     };
   </script>
+  <!-- Confetti library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  
+  <script src="js/auth.js"></script>
+  <script src="js/theme.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/bracket.js"></script>
   <script src="js/tournament.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/cursor-effect.js"></script>
 
 </body>
 </html>
+
