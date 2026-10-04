@@ -392,9 +392,9 @@ const UI = (() => {
                   ${t.bgBase64 ? `<small style="color: var(--bs-yellow); display:block; margin-top:0.3rem;">✅ Đang dùng nền tùy chỉnh — <button type="button" onclick="UI._clearBackground()" style="background:none;border:none;color:#ff4444;cursor:pointer;text-decoration:underline;font-size:0.8rem;">Xóa nền (Dùng mặc định)</button></small>` : '<small style="color: rgba(255,255,255,0.5); display:block; margin-top:0.3rem;">Dùng nền mặc định</small>'}
                 </div>
                 <div class="form-group">
-                  <label class="form-label board-label">Font Tiêu đề H1/H2 (TTF/OTF/WOFF)</label>
+                  <label class="form-label board-label">Font Mặc Định Toàn Cục (H1/H2/Body)</label>
                   <input type="file" id="t-font-file" accept=".ttf,.otf,.woff" class="form-input board-input" style="padding:0.5rem;" onchange="UI._updateThemePreview()">
-                  ${t.fontName ? `<small style="color: var(--bs-yellow); display:block; margin-top:0.3rem;">✅ Hiện tại: ${t.fontName} — <button type="button" onclick="UI._clearMainFont()" style="background:none;border:none;color:#ff4444;cursor:pointer;text-decoration:underline;font-size:0.8rem;">Xóa font H1/H2</button></small>` : '<small style="color: rgba(255,255,255,0.5); display:block; margin-top:0.3rem;">Chưa có font H1/H2 tùy chỉnh</small>'}
+                  ${t.fontName ? `<small style="color: var(--bs-yellow); display:block; margin-top:0.3rem;">✅ Hiện tại: ${t.fontName} — <button type="button" onclick="UI._clearMainFont()" style="background:none;border:none;color:#ff4444;cursor:pointer;text-decoration:underline;font-size:0.8rem;">Xóa font mặc định</button></small>` : '<small style="color: rgba(255,255,255,0.5); display:block; margin-top:0.3rem;">Chưa có font tùy chỉnh</small>'}
                 </div>
               </div>
 

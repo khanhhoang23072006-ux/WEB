@@ -1,9 +1,17 @@
 /* ============================================================
-   SVN-Whimsy Font
+   Custom Fonts
    ============================================================ */
 @font-face {
-  font-family: 'SVN-Whimsy';
-  src: url('../fonts/SVN-Whimsy.ttf') format('truetype');
+  font-family: 'SomeTimeLater';
+  src: url('../fonts/DFVN-SomeTimeLater.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SVN-SAF';
+  src: url('../fonts/SVN-SAF.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -64,8 +72,9 @@
      0px -1px 0 var(--stroke-color),  0px  1px 0 var(--stroke-color),
     -1px  0px 0 var(--stroke-color),  1px  0px 0 var(--stroke-color);
   
-  --font-header: 'SVN-Whimsy', cursive, sans-serif;
-  --font-body: 'SVN-Whimsy', cursive, sans-serif;
+  --font-h1: 'SomeTimeLater', cursive, sans-serif;
+  --font-header: 'SVN-SAF', sans-serif;
+  --font-body: 'SVN-SAF', sans-serif;
   
   --border-width: 4px;
 }
@@ -100,9 +109,10 @@ a, button, select, input, .btn, .filter-chip, .emoji-opt, .tournament-card, .for
 }
 
 a { color: inherit; text-decoration: none; }
-button { cursor: pointer; font-family: 'SVN-Whimsy', cursive, sans-serif; border: none; outline: none; }
+button { cursor: pointer; font-family: var(--font-header); border: none; outline: none; }
 
 /* Text Effects (Brawl Stars style headers) */
+h1, .modal-title, .text-3d-title { font-family: var(--font-h1) !important; }
 h1, h2, h3, .bs-header, .tournament-title, .modal-title, .dashboard-header h1, .section-title, .champion-name {
   font-family: var(--font-header);
   font-weight: 800;

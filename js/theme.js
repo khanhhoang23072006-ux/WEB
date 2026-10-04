@@ -59,6 +59,7 @@ const ThemeManager = {
         }
         :root {
           --font-header: 'CustomAdminFont', 'SVN-Whimsy', cursive, sans-serif !important;
+          --font-body: 'CustomAdminFont', 'SVN-Whimsy', cursive, sans-serif !important;
         }
       `;
     }
