@@ -1456,8 +1456,9 @@ const UI = (() => {
   function _renderTeamSelect(match, tournament, teamSlot) {
     const t = match[`team${teamSlot}Id`] ? _getTeamById(tournament, match[`team${teamSlot}Id`]) : null;
     
-    // Only Admin can edit, and only pending matches
-    if (!Auth.isAdmin() || match.status !== 'pending') {
+    // Only Admin can edit, and only pending matches of ROUND 1
+    // Inner rounds (> 1) are strictly auto-filled by advancing winners.
+    if (!Auth.isAdmin() || match.status !== 'pending' || match.round > 1) {
       return `<span class="bracket-team-name match-team-name" style="display:flex;align-items:center;gap:4px;">${t ? `${_renderAvatar(t)} ${_esc(t.name)}` : '???'}</span>`;
     }
 
