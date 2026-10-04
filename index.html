@@ -31,6 +31,13 @@
     </div>
   </nav>
 
+  <!-- Donate Marquee -->
+  <div id="donate-marquee-container" class="donate-marquee-wrapper" style="display: none;">
+    <div class="donate-marquee">
+      <span id="donate-marquee-text"></span>
+    </div>
+  </div>
+
   <!-- Main Content -->
   <main id="app" class="container">
   </main>
@@ -43,33 +50,59 @@
   <!-- Toast Container -->
   <div id="toast-container" class="toast-container"></div>
 
-  <!-- Bottom Navigation Bar -->
-  <nav class="bottom-nav" id="bottom-nav">
-    <a href="#/" class="bnav-item active" id="bnav-home">
-      <div class="bnav-icon">
+  <!-- Side Navigation Bar -->
+  <nav class="side-nav" id="bottom-nav">
+    <a href="#/" class="snav-item active" id="bnav-home">
+      <div class="snav-icon">
         <img src="img/icon-shop.png" alt="Home" style="width: 100%; height: 100%; object-fit: contain;">
       </div>
       <span>Trang chủ</span>
     </a>
-    <a href="#/create" class="bnav-item" id="bnav-create" style="display:none;">
-      <div class="bnav-icon bnav-icon--main" style="border: none; background: transparent; padding: 0;">
-        <img src="img/icon-play.png" alt="Create" style="width: 130%; height: 130%; object-fit: contain; margin-top: -15%; margin-left: -15%;">
+    <a href="#/create" class="snav-item" id="bnav-create" style="display:none;">
+      <div class="snav-icon">
+        <img src="img/icon-play.png" alt="Create" style="width: 100%; height: 100%; object-fit: contain;">
       </div>
       <span>Tạo giải</span>
     </a>
-    <a href="#/stats" class="bnav-item" id="bnav-stats">
-      <div class="bnav-icon">
+    <a href="#/stats" class="snav-item" id="bnav-stats">
+      <div class="snav-icon">
         <img src="img/icon-deck.png" alt="Stats" style="width: 100%; height: 100%; object-fit: contain;">
       </div>
       <span>Thống kê</span>
     </a>
-    <a href="#/search" class="bnav-item" id="bnav-search">
-      <div class="bnav-icon">
+    <a href="#/search" class="snav-item" id="bnav-search">
+      <div class="snav-icon">
         <img src="img/icon-portal.png" alt="Search" style="width: 100%; height: 100%; object-fit: contain;">
       </div>
       <span>Tìm kiếm</span>
     </a>
   </nav>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-logo">
+        <img src="img/icon-play.png" alt="Arena Logo">
+        <span>ARENA</span>
+      </div>
+      <div class="footer-links">
+        <a href="#/">TRANG CHỦ</a>
+        <a href="#/stats">THỐNG KÊ</a>
+        <a href="#/search">TÌM KIẾM</a>
+      </div>
+      <div class="footer-social">
+        <a href="https://www.facebook.com/bourbon.gk" target="_blank" class="social-icon" style="padding: 0.2rem; display: flex; align-items: center; justify-content: center; background: transparent; border: none; box-shadow: none;">
+          <img src="https://static.vecteezy.com/system/resources/previews/018/930/698/original/facebook-logo-facebook-icon-transparent-free-png.png" alt="Facebook 3D" style="width: 48px; height: 48px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+        </a>
+        <a href="javascript:void(0)" class="social-icon" style="color: #FF0000; display: flex; align-items: center; justify-content: center; width: 42px; height: 42px;">Yt</a>
+        <a href="javascript:void(0)" class="social-icon" style="color: #5865F2; display: flex; align-items: center; justify-content: center; width: 42px; height: 42px;">Dc</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 ARENA. Nền tảng quản lý giải đấu Mini.</p>
+      <p class="disclaimer">Sản phẩm này không liên quan, không được tài trợ hay phê duyệt bởi Supercell.</p>
+    </div>
+  </footer>
 
   <!-- Scripts -->
   <script>

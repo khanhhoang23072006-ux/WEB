@@ -14,8 +14,8 @@ const App = (() => {
     const hash = window.location.hash || '#/';
 
     // Guard routes
-    if (hash === '#/create' && (!Auth.isAdmin())) {
-      UI.showToast('Bạn không có quyền tạo giải đấu. Cần quyền Admin!', 'error');
+    if (hash === '#/create' && (!Auth.getCurrentUser())) {
+      UI.showToast('Vui lòng đăng nhập để tạo giải đấu!', 'error');
       window.location.hash = '#/';
       return;
     }

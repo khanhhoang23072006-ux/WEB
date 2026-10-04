@@ -152,6 +152,12 @@ const UI = (() => {
           </div>
         </div>
 
+        <!-- Advertisement Banner -->
+        <div class="ad-banner-container" style="margin-top: 2.5rem; margin-bottom: 0.5rem; border-radius: 12px; border: 4px solid #14151a; overflow: hidden; box-shadow: 0 6px 0 rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.5); position: relative; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'" onclick="window.open('https://omg10.com/4/11954579', '_blank')">
+          <span style="position: absolute; top: 0; right: 0; background: rgba(0,0,0,0.8); color: var(--bs-yellow); padding: 4px 10px; font-size: 0.8rem; font-family: var(--font-header); border-bottom-left-radius: 8px; z-index: 2; border-left: 2px solid #14151a; border-bottom: 2px solid #14151a;">TÀI TRỢ</span>
+          <img src="img/ad-banner.jpg" alt="Sponsor Advertisement" style="width: 100%; height: auto; display: block; object-fit: cover; max-height: 250px; opacity: 0.95;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.95'">
+        </div>
+
         <div class="section-header" style="margin-top: 2.5rem; margin-bottom: 1.5rem;">
           <h2 class="section-title">🕒 GIẢI ĐẤU GẦN ĐÂY</h2>
           <a href="#/search" class="btn btn-secondary btn-sm" style="font-size: 1rem; padding: 0.4rem 0.8rem; border-radius: 6px;">Xem tất cả &rarr;</a>
@@ -751,6 +757,12 @@ const UI = (() => {
                 <div class="form-group">
                   <label class="form-label board-label">Môn thi đấu</label>
                   <input type="text" class="form-input board-input" id="f-sport" placeholder="VD: Bóng đá, PUBG...">
+                  <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                    <span class="sport-suggestion" onclick="document.getElementById('f-sport').value='Bóng đá'">Bóng đá</span>
+                    <span class="sport-suggestion" onclick="document.getElementById('f-sport').value='Free Fire'">Free Fire</span>
+                    <span class="sport-suggestion" onclick="document.getElementById('f-sport').value='PUBG'">PUBG</span>
+                    <span class="sport-suggestion" onclick="document.getElementById('f-sport').value='Liên Quân'">Liên Quân</span>
+                  </div>
                 </div>
                 <div class="form-group">
                   <label class="form-label board-label">Ngày khai mạc</label>
@@ -831,11 +843,32 @@ const UI = (() => {
       return;
     }
 
+    const currentUser = Auth.getCurrentUser();
+    if (!currentUser) {
+      showToast('Bạn cần đăng nhập để tạo giải đấu!', 'error');
+      return;
+    }
+
+    if (currentUser.role === 'user') {
+      const balance = currentUser.balance || 0;
+      if (balance < 5) {
+        showToast('Bạn không đủ PTS để tạo giải! Cần 5 PTS.', 'error');
+        return;
+      }
+      Auth.updateBalance(-5);
+      updateAuthUI(); // Refresh top bar balance if it's shown there
+    }
+
     const tournament = TournamentManager.create({
       name, description: desc, sport, format, startDate: date, numGroups
     });
 
-    showToast('Giải đấu đã được khởi tạo! ⚡', 'success');
+    if (currentUser.role === 'user') {
+      showToast('Đã trừ 5 PTS. Giải đấu đã được khởi tạo! ⚡', 'success');
+    } else {
+      showToast('Giải đấu đã được khởi tạo! ⚡', 'success');
+    }
+    
     App.navigate(`#/tournament/${tournament.id}`);
   }
 
@@ -1484,7 +1517,7 @@ const UI = (() => {
     // Inner rounds (> 1) are strictly auto-filled.
     // If it's a Group Stage tournament, ALL knockout matches are auto-filled, so disable dropdowns completely.
     const isGroupKnockout = tournament.format === 'group_stage' && !match.group;
-    if (!Auth.isAdmin() || match.status !== 'pending' || match.round > 1 || isGroupKnockout) {
+    if (!Auth.getCurrentUser() || match.status !== 'pending' || match.round > 1 || isGroupKnockout) {
       return `<span class="bracket-team-name match-team-name" style="display:flex;align-items:center;gap:4px;">${t ? `${_renderAvatar(t)} ${_esc(t.name)}` : '???'}</span>`;
     }
 
@@ -1966,24 +1999,24 @@ const UI = (() => {
       if (currentUser) {
         authSection.innerHTML = `
           <div style="display:flex; align-items:center; gap:0.5rem;">
-            ${currentUser.role === 'admin' ? '<a href="#/admin-theme" class="btn btn-yellow btn-sm" style="padding: 0.2rem 0.5rem; font-size: 0.9rem;">🎨 Tùy chỉnh Theme</a>' : ''}
-            <a href="#/profile" class="btn btn-blue btn-sm" style="padding: 0.3rem 0.8rem; font-size: 1rem; border-radius: 8px;">
+            ${currentUser.role === 'admin' ? '<a href="#/admin-theme" class="btn btn-yellow btn-sm" style="padding: 0.3rem 0.8rem; font-size: 1rem; border-radius: 8px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; height: 38px;">🎨 TÙY CHỈNH THEME</a>' : ''}
+            <a href="#/profile" class="btn btn-blue btn-sm" style="padding: 0.3rem 0.8rem; font-size: 1rem; border-radius: 8px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; height: 38px;">
               ${currentUser.role === 'admin' ? '👑' : '👤'} ${currentUser.username}
             </a>
-            <button class="btn btn-danger btn-sm" onclick="UI._handleLogout()">Thoát</button>
+            <button class="btn btn-danger btn-sm" style="padding: 0.3rem 0.8rem; font-size: 1rem; border-radius: 8px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; height: 38px;" onclick="UI._handleLogout()">THOÁT</button>
           </div>
         `;
       } else {
         authSection.innerHTML = `
-          <button class="btn btn-yellow btn-sm" onclick="UI._openAuthModal()">Đăng nhập</button>
+          <button class="btn btn-yellow btn-sm" style="padding: 0.3rem 0.8rem; font-size: 1rem; border-radius: 8px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; height: 38px;" onclick="UI._openAuthModal()">ĐĂNG NHẬP</button>
         `;
       }
     }
     
     // Toggle Create buttons
-    const isAdmin = Auth.isAdmin();
-    if (createNavBtn) createNavBtn.style.display = isAdmin ? 'inline-block' : 'none';
-    if (bnavCreate) bnavCreate.style.display = isAdmin ? 'flex' : 'none';
+    const canCreate = !!Auth.getCurrentUser();
+    if (createNavBtn) createNavBtn.style.display = canCreate ? 'inline-block' : 'none';
+    if (bnavCreate) bnavCreate.style.display = canCreate ? 'flex' : 'none';
   }
 
   function _openAuthModal() {
@@ -1995,8 +2028,8 @@ const UI = (() => {
       <div class="modal-body">
         <p style="color:var(--text-muted); margin-bottom:1rem; font-size:0.9rem;">
           Mặc định đã có tài khoản:<br>
-          - <b>admin</b> / pass: 123 (Có quyền Tạo Giải)<br>
-          - <b>player</b> / pass: 123 (Chỉ xem)
+          - <b>admin</b> / pass: 123 (Tạo giải, Admin Theme)<br>
+          - <b>player</b> / pass: 123 (Tạo giải, Xem)
         </p>
         <div class="form-group">
           <label class="form-label">Tài khoản</label>
@@ -2261,7 +2294,7 @@ const UI = (() => {
     document.getElementById('deposit-qr-container').style.display = 'block';
     
     const moneyStr = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(num);
-    document.getElementById('deposit-amount-text').innerText = moneyStr;
+    document.getElementById('deposit-amount-text').innerText = moneyStr + ` ➡️ ${num/1000} PTS`;
     
     document.getElementById('confirm-deposit-btn').setAttribute('onclick', `UI._handleDeposit(${num})`);
     
@@ -2272,18 +2305,21 @@ const UI = (() => {
   }
 
   function _handleDeposit(amount) {
-    if (Auth.updateBalance(amount)) {
+    const pts = amount / 1000;
+    if (Auth.updateBalance(pts)) {
       const amountStr = new Intl.NumberFormat('vi-VN').format(amount);
-      showToast('Đã nạp thành công ' + amountStr + 'đ!', 'success');
+      showToast('Đã nạp thành công ' + amountStr + 'đ (' + pts + ' PTS)!', 'success');
       hideModal();
       renderProfilePage();
       triggerConfetti();
+      const user = Auth.getCurrentUser();
+      _updateMarquee(`💖 WOW! <b>${_esc(user.username)}</b> vừa nạp <b>${amountStr}đ</b> (${pts} PTS) vào hệ thống! 💖 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 💖 WOW! <b>${_esc(user.username)}</b> vừa nạp <b>${amountStr}đ</b> (${pts} PTS) vào hệ thống! 💖`);
     }
   }
 
   function _openDonateModal() {
     const user = Auth.getCurrentUser();
-    const balanceStr = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(user.balance || 0);
+    const ptsStr = (user.balance || 0) + ' PTS';
     const html = `
       <div class="modal-header">
         <h2 class="modal-title" style="color: #ff5cfa;">💖 DONATE ADMIN</h2>
@@ -2291,11 +2327,11 @@ const UI = (() => {
       </div>
       <div style="text-align: center; margin-bottom: 1.5rem;">
         <p style="font-family: var(--font-body); font-weight: 700; margin-bottom: 0.5rem; color: rgba(255,255,255,0.8);">Cảm ơn bạn đã ủng hộ để duy trì dự án ARENA!</p>
-        <p style="color: var(--bs-green); font-family: var(--font-header); font-size: 1.4rem; -webkit-text-stroke: var(--text-stroke-light);">Số dư hiện tại: ${balanceStr}</p>
+        <p style="color: var(--bs-green); font-family: var(--font-header); font-size: 1.4rem; -webkit-text-stroke: var(--text-stroke-light);">Số dư hiện tại: ${ptsStr}</p>
         
         <div class="form-group" style="text-align: left; margin-top: 1.5rem;">
-          <label class="form-label" style="font-size: 1.2rem;">Nhập số tiền muốn quyên góp (VNĐ):</label>
-          <input type="number" id="donate-amount" class="form-input" placeholder="Ví dụ: 50000" min="1000" step="1000">
+          <label class="form-label" style="font-size: 1.2rem;">Nhập số PTS muốn quyên góp (1 PTS = 1000 VNĐ):</label>
+          <input type="number" id="donate-amount" class="form-input" placeholder="Ví dụ: 50" min="1" step="1">
         </div>
       </div>
       <div style="display: flex; gap: 0.5rem;">
@@ -2309,28 +2345,30 @@ const UI = (() => {
   function _handleDonate() {
     const input = document.getElementById('donate-amount');
     if (!input) return;
-    const amount = parseInt(input.value);
+    const pts = parseInt(input.value);
     
-    if (isNaN(amount) || amount <= 0) {
-      showToast('Vui lòng nhập số tiền hợp lệ!', 'error');
+    if (isNaN(pts) || pts <= 0) {
+      showToast('Vui lòng nhập số PTS hợp lệ!', 'error');
       return;
     }
     
     const user = Auth.getCurrentUser();
-    if ((user.balance || 0) < amount) {
-      showToast('Số dư không đủ! Vui lòng nạp thêm.', 'error');
+    if ((user.balance || 0) < pts) {
+      showToast('Số dư PTS không đủ! Vui lòng nạp thêm.', 'error');
       return;
     }
     
-    if (Auth.updateBalance(-amount)) {
-      const amountStr = new Intl.NumberFormat('vi-VN').format(amount);
-      showToast('Cảm ơn bạn đã donate ' + amountStr + 'đ! ❤️', 'success');
+    if (Auth.updateBalance(-pts)) {
+      showToast('Cảm ơn bạn đã donate ' + pts + ' PTS! ❤️', 'success');
       hideModal();
       renderProfilePage();
       
       setTimeout(triggerConfetti, 100);
       setTimeout(triggerConfetti, 300);
       setTimeout(triggerConfetti, 500);
+      
+      const user = Auth.getCurrentUser();
+      _updateMarquee(`💖 TUYỆT VỜI! Cảm ơn <b>${_esc(user.username)}</b> đã donate <b>${pts} PTS</b> ủng hộ dự án! 💖 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 💖 TUYỆT VỜI! Cảm ơn <b>${_esc(user.username)}</b> đã donate <b>${pts} PTS</b> ủng hộ dự án! 💖`);
     }
   }
 
@@ -2399,6 +2437,26 @@ const UI = (() => {
     return `<span class="rank-badge rank-bronze" title="Đồng (${score} Đ)">🥉 Đồng</span>`;
   }
 
+  function _updateMarquee(message) {
+    const marqueeContainer = document.getElementById('donate-marquee-container');
+    const marqueeText = document.getElementById('donate-marquee-text');
+    if (marqueeContainer && marqueeText) {
+      if (message) {
+        marqueeText.innerHTML = message;
+        marqueeContainer.style.display = 'flex';
+        localStorage.setItem('arena_marquee_message', message);
+      } else {
+        const stored = localStorage.getItem('arena_marquee_message');
+        if (stored) {
+          marqueeText.innerHTML = stored;
+          marqueeContainer.style.display = 'flex';
+        } else {
+          marqueeContainer.style.display = 'none';
+        }
+      }
+    }
+  }
+
   return {
     renderDashboard,
     renderCreateForm,
@@ -2454,9 +2512,16 @@ const UI = (() => {
     _openDonateModal,
     _handleDonate,
     triggerConfetti,
+    updateMarquee: _updateMarquee
   };
 })();
 
+// Restore marquee on load
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.UI && UI.updateMarquee) {
+    UI.updateMarquee();
+  }
+});
 
 
 
