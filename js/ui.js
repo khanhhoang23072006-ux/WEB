@@ -2012,6 +2012,8 @@ const UI = (() => {
       return;
     }
 
+    const balanceStr = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(user.balance || 0);
+
     getApp().innerHTML = `
       <div class="dashboard animate-in">
         <div class="dashboard-header" style="justify-content:center;">
@@ -2021,7 +2023,18 @@ const UI = (() => {
         <div class="form-card" style="max-width: 500px; margin: 0 auto; text-align: center; padding: 2rem;">
           <div style="font-size: 5rem; margin-bottom: 0.5rem; text-shadow: 0 4px 0 #141634;">${user.role === 'admin' ? '👑' : '👤'}</div>
           <h2 style="font-size: 2.5rem; color: var(--bs-yellow); margin-bottom: 0.5rem;">${_esc(user.username)}</h2>
-          <span class="badge badge-format" style="margin-bottom: 2rem;">VAI TRÒ: ${user.role.toUpperCase()}</span>
+          <span class="badge badge-format" style="margin-bottom: 1rem;">VAI TRÒ: ${user.role.toUpperCase()}</span>
+          
+          <div style="background: var(--bg-dark); padding: 1.5rem; border-radius: 8px; border: 2px solid var(--border-black); margin-bottom: 2rem; box-shadow: inset 0 4px 0 rgba(0,0,0,0.2);">
+            <div style="font-size: 1.2rem; color: white; font-family: var(--font-header); -webkit-text-stroke: var(--text-stroke-light);">SỐ DƯ TÀI KHOẢN</div>
+            <div style="font-size: 2.8rem; color: var(--bs-green); font-family: var(--font-header); -webkit-text-stroke: 1px #141634; text-shadow: 2px 2px 0 #141634; margin: 0.5rem 0;">
+              ${balanceStr}
+            </div>
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap;">
+              <button class="btn btn-blue" onclick="UI._openDepositModal()">💎 NẠP TIỀN</button>
+              <button class="btn btn-special" onclick="UI._openDonateModal()">💖 DONATE</button>
+            </div>
+          </div>
           
           <div style="text-align: left; margin-bottom: 2rem;">
             <div class="form-group">
@@ -2061,6 +2074,91 @@ const UI = (() => {
       renderProfilePage();
     } else {
       showToast('Tên đăng nhập đã tồn tại!', 'error');
+    }
+  }
+
+  function _openDepositModal() {
+    const html = `
+      <div class="modal-header">
+        <h2 class="modal-title" style="color: var(--bs-green);">💎 NẠP TIỀN</h2>
+        <button class="modal-close" onclick="UI.hideModal()">×</button>
+      </div>
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <p style="font-family: var(--font-body); font-weight: 700; margin-bottom: 1rem;">Quét mã QR bằng ứng dụng ngân hàng hoặc ví điện tử.</p>
+        <div style="background: white; padding: 1rem; border-radius: 12px; display: inline-block; border: 4px solid var(--border-black); margin-bottom: 1rem; box-shadow: var(--shadow-black);">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=ARENA_DEPOSIT_DEMO" alt="QR Code" style="width: 200px; height: 200px; display: block;">
+        </div>
+        <p style="color: var(--bs-yellow); font-family: var(--font-header); font-size: 1.2rem; -webkit-text-stroke: var(--text-stroke-light);">(Giả lập: Hãy chọn số tiền muốn nạp)</p>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+        <button class="btn btn-blue" onclick="UI._handleDeposit(50000)">Nạp 50.000đ</button>
+        <button class="btn btn-blue" onclick="UI._handleDeposit(100000)">Nạp 100.000đ</button>
+        <button class="btn btn-blue" onclick="UI._handleDeposit(500000)">Nạp 500.000đ</button>
+      </div>
+    `;
+    showModal(html);
+  }
+
+  function _handleDeposit(amount) {
+    if (Auth.updateBalance(amount)) {
+      const amountStr = new Intl.NumberFormat('vi-VN').format(amount);
+      showToast('Đã nạp thành công ' + amountStr + 'đ!', 'success');
+      hideModal();
+      renderProfilePage();
+      triggerConfetti();
+    }
+  }
+
+  function _openDonateModal() {
+    const user = Auth.getCurrentUser();
+    const balanceStr = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(user.balance || 0);
+    const html = `
+      <div class="modal-header">
+        <h2 class="modal-title" style="color: #ff5cfa;">💖 DONATE ADMIN</h2>
+        <button class="modal-close" onclick="UI.hideModal()">×</button>
+      </div>
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <p style="font-family: var(--font-body); font-weight: 700; margin-bottom: 0.5rem; color: rgba(255,255,255,0.8);">Cảm ơn bạn đã ủng hộ để duy trì dự án ARENA!</p>
+        <p style="color: var(--bs-green); font-family: var(--font-header); font-size: 1.4rem; -webkit-text-stroke: var(--text-stroke-light);">Số dư hiện tại: ${balanceStr}</p>
+        
+        <div class="form-group" style="text-align: left; margin-top: 1.5rem;">
+          <label class="form-label" style="font-size: 1.2rem;">Nhập số tiền muốn quyên góp (VNĐ):</label>
+          <input type="number" id="donate-amount" class="form-input" placeholder="Ví dụ: 50000" min="1000" step="1000">
+        </div>
+      </div>
+      <div style="display: flex; gap: 0.5rem;">
+        <button class="btn btn-ghost" style="flex:1;" onclick="UI.hideModal()">HỦY</button>
+        <button class="btn btn-special" style="flex:1;" onclick="UI._handleDonate()">GỬI DONATE</button>
+      </div>
+    `;
+    showModal(html);
+  }
+
+  function _handleDonate() {
+    const input = document.getElementById('donate-amount');
+    if (!input) return;
+    const amount = parseInt(input.value);
+    
+    if (isNaN(amount) || amount <= 0) {
+      showToast('Vui lòng nhập số tiền hợp lệ!', 'error');
+      return;
+    }
+    
+    const user = Auth.getCurrentUser();
+    if ((user.balance || 0) < amount) {
+      showToast('Số dư không đủ! Vui lòng nạp thêm.', 'error');
+      return;
+    }
+    
+    if (Auth.updateBalance(-amount)) {
+      const amountStr = new Intl.NumberFormat('vi-VN').format(amount);
+      showToast('Cảm ơn bạn đã donate ' + amountStr + 'đ! ❤️', 'success');
+      hideModal();
+      renderProfilePage();
+      
+      setTimeout(triggerConfetti, 100);
+      setTimeout(triggerConfetti, 300);
+      setTimeout(triggerConfetti, 500);
     }
   }
 
@@ -2176,6 +2274,10 @@ const UI = (() => {
     _setSort,
     _clearFilters,
     _selectEmoji,
+    _openDepositModal,
+    _handleDeposit,
+    _openDonateModal,
+    _handleDonate,
     triggerConfetti,
   };
 })();

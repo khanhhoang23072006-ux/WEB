@@ -14,13 +14,19 @@ const Auth = {
   
   getCurrentUser() {
     const u = localStorage.getItem('brawl_currentUser');
-    return u ? JSON.parse(u) : null;
+    if (u) {
+      const user = JSON.parse(u);
+      if (typeof user.balance === 'undefined') user.balance = 0;
+      return user;
+    }
+    return null;
   },
   
   login(username, password) {
     const users = this.getUsers();
     const user = users.find(u => u.username === username && u.password === password);
     if (user) {
+      if (typeof user.balance === 'undefined') user.balance = 0;
       localStorage.setItem('brawl_currentUser', JSON.stringify(user));
       return true;
     }
@@ -32,7 +38,7 @@ const Auth = {
     if (users.find(u => u.username === username)) {
       return false; // username exists
     }
-    const newUser = { id: 'u' + Date.now(), username, password, role };
+    const newUser = { id: 'u' + Date.now(), username, password, role, balance: 0 };
     users.push(newUser);
     localStorage.setItem('brawl_users', JSON.stringify(users));
     localStorage.setItem('brawl_currentUser', JSON.stringify(newUser));
@@ -58,6 +64,22 @@ const Auth = {
     
     localStorage.setItem('brawl_users', JSON.stringify(users));
     localStorage.setItem('brawl_currentUser', JSON.stringify(updatedUser));
+    return true;
+  },
+
+  updateBalance(amount) {
+    const currentUser = this.getCurrentUser();
+    if (!currentUser) return false;
+    
+    const users = this.getUsers();
+    const idx = users.findIndex(u => u.id === currentUser.id);
+    if (idx === -1) return false;
+    
+    currentUser.balance = (currentUser.balance || 0) + amount;
+    users[idx].balance = currentUser.balance;
+    
+    localStorage.setItem('brawl_users', JSON.stringify(users));
+    localStorage.setItem('brawl_currentUser', JSON.stringify(currentUser));
     return true;
   },
 
