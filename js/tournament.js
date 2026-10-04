@@ -318,9 +318,49 @@ const TournamentManager = (() => {
     }
     
     const round1Matches = koMatches.filter(m => m.round === 1).sort((a, b) => a.position - b.position);
+    
+    const totalSlots = round1Matches.length * 2;
+    const numByes = totalSlots - advancingTeams.length;
+    const padded = [];
+    let teamIdx = 0;
+    
+    for (let i = 0; i < numByes; i++) {
+      padded.push(advancingTeams[teamIdx++]);
+      padded.push('BYE');
+    }
+    while (teamIdx < advancingTeams.length) {
+      padded.push(advancingTeams[teamIdx++]);
+      padded.push(advancingTeams[teamIdx++]);
+    }
+    
     round1Matches.forEach((m, idx) => {
-       m.team1Id = advancingTeams[idx * 2] ? advancingTeams[idx * 2].id : null;
-       m.team2Id = advancingTeams[idx * 2 + 1] ? advancingTeams[idx * 2 + 1].id : null;
+       const t1 = padded[idx * 2];
+       const t2 = padded[idx * 2 + 1];
+       
+       m.team1Id = (t1 && t1 !== 'BYE') ? t1.id : null;
+       m.team2Id = (t2 && t2 !== 'BYE') ? t2.id : null;
+       
+       const isBye = t1 === 'BYE' || t2 === 'BYE';
+       if (isBye) {
+         m.status = 'bye';
+         m.score1 = t1 === 'BYE' ? null : (m.team1Id ? 1 : 0);
+         m.score2 = t2 === 'BYE' ? null : (m.team2Id ? 1 : 0);
+         m.winnerId = m.team1Id || m.team2Id || null;
+         
+         if (m.winnerId) {
+           Bracket.advanceWinner(tournament.matches, m);
+         } else if (m.nextMatchId) {
+           const nextMatch = tournament.matches.find(nx => nx.id === m.nextMatchId);
+           if (nextMatch) {
+             const feeders = tournament.matches.filter(f => f.nextMatchId === nextMatch.id).sort((a,b) => a.position - b.position);
+             if (feeders.findIndex(f => f.id === m.id) === 0) nextMatch.team1Id = null;
+             else nextMatch.team2Id = null;
+           }
+         }
+       } else if (m.status === 'bye') {
+         m.status = 'pending';
+         m.score1 = null; m.score2 = null; m.winnerId = null;
+       }
     });
     
     // Update tournament status
