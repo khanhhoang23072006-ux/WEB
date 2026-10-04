@@ -132,8 +132,10 @@ const TournamentManager = (() => {
     match.score2 = parseInt(score2);
     match.status = 'completed';
 
+    const isKnockout = tournament.format === 'single_elimination' || (tournament.format === 'group_stage' && !match.group);
+
     // Determine winner
-    if (tournament.format === 'single_elimination') {
+    if (isKnockout) {
       // SE requires a winner - use explicit winnerId or higher score
       if (winnerId) {
         match.winnerId = winnerId;
@@ -150,8 +152,9 @@ const TournamentManager = (() => {
       Bracket.advanceWinner(tournament.matches, match);
 
       // Check if final match is done
-      const maxRound = Math.max(...tournament.matches.map(m => m.round));
-      const finalMatch = tournament.matches.find(m => m.round === maxRound);
+      const koMatches = tournament.matches.filter(m => !m.group);
+      const maxRound = Math.max(...koMatches.map(m => m.round));
+      const finalMatch = koMatches.find(m => m.round === maxRound);
       if (finalMatch && finalMatch.status === 'completed' && finalMatch.winnerId) {
         tournament.status = 'completed';
         tournament.champion = finalMatch.winnerId;
@@ -166,13 +169,38 @@ const TournamentManager = (() => {
         match.winnerId = null; // draw
       }
 
-      // Check if all matches are complete
-      const allDone = tournament.matches.every(m => m.status === 'completed');
-      if (allDone) {
-        tournament.status = 'completed';
-        const standings = getStandings(tournament);
-        if (standings.length > 0) {
-          tournament.champion = standings[0].teamId;
+      if (tournament.format === 'group_stage') {
+        const groupMatches = tournament.matches.filter(m => m.group);
+        const koMatches = tournament.matches.filter(m => !m.group);
+        const allGroupDone = groupMatches.every(m => m.status === 'completed');
+        
+        if (allGroupDone && koMatches.length === 0) {
+          // Transition to Knockout Stage! (Top 2 from each group)
+          const groupStandings = getGroupStandings(tournament);
+          const advancingTeams = [];
+          
+          Object.values(groupStandings).forEach(standings => {
+            if (standings.length > 0) advancingTeams.push(tournament.teams.find(t => t.id === standings[0].teamId));
+            if (standings.length > 1) advancingTeams.push(tournament.teams.find(t => t.id === standings[1].teamId));
+          });
+          
+          if (advancingTeams.length > 1) {
+            const newMatches = Bracket.generateSingleElimination(advancingTeams, tournament.matches.length + 1);
+            tournament.matches.push(...newMatches);
+          } else {
+            tournament.status = 'completed';
+            tournament.champion = advancingTeams[0]?.id;
+          }
+        }
+      } else if (tournament.format === 'round_robin') {
+        // Check if all matches are complete
+        const allDone = tournament.matches.every(m => m.status === 'completed');
+        if (allDone) {
+          tournament.status = 'completed';
+          const standings = getStandings(tournament);
+          if (standings.length > 0) {
+            tournament.champion = standings[0].teamId;
+          }
         }
       }
     }
@@ -190,9 +218,17 @@ const TournamentManager = (() => {
     const match = tournament.matches.find(m => m.id === matchId);
     if (!match) return false;
 
-    // For SE, also need to clear downstream matches
-    if (tournament.format === 'single_elimination' && match.nextMatchId) {
+    const isKnockout = tournament.format === 'single_elimination' || (tournament.format === 'group_stage' && !match.group);
+
+    // For Knockout, need to clear downstream matches
+    if (isKnockout && match.nextMatchId) {
       _clearDownstream(tournament.matches, match);
+    } else if (tournament.format === 'group_stage' && match.group) {
+      // If we reset a group match, delete all knockout matches because standings might change
+      const koMatches = tournament.matches.filter(m => !m.group);
+      if (koMatches.length > 0) {
+        tournament.matches = tournament.matches.filter(m => m.group);
+      }
     }
 
     match.score1 = null;

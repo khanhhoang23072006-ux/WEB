@@ -21,12 +21,12 @@ const Bracket = (() => {
 
   // ── Single Elimination ──────────────────────────────────────
 
-  function generateSingleElimination(teams) {
+  function generateSingleElimination(teams, startIndex = 1) {
     const shuffled = _shuffle(teams);
     const totalSlots = _nextPowerOf2(shuffled.length);
     const numRounds = Math.log2(totalSlots);
     const matches = [];
-    let matchCounter = 1;
+    let matchCounter = startIndex;
 
     // Pad team list with nulls for byes
     const padded = [...shuffled];
