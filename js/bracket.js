@@ -28,9 +28,20 @@ const Bracket = (() => {
     const matches = [];
     let matchCounter = startIndex;
 
-    // Pad team list with nulls for byes
-    const padded = [...shuffled];
-    while (padded.length < totalSlots) padded.push(null);
+    // Distribute byes to prevent null vs null matches
+    const numByes = totalSlots - shuffled.length;
+    const padded = [];
+    let teamIdx = 0;
+    
+    for (let i = 0; i < numByes; i++) {
+      padded.push(shuffled[teamIdx++]);
+      padded.push(null); // Bye
+    }
+    
+    while (teamIdx < shuffled.length) {
+      padded.push(shuffled[teamIdx++]);
+      padded.push(shuffled[teamIdx++]);
+    }
 
     // First round matches
     for (let i = 0; i < totalSlots / 2; i++) {
