@@ -21,8 +21,8 @@ const Bracket = (() => {
 
   // ── Single Elimination ──────────────────────────────────────
 
-  function generateSingleElimination(teams, startIndex = 1) {
-    const shuffled = _shuffle(teams);
+  function generateSingleElimination(teams, startIndex = 1, skipShuffle = false) {
+    const shuffled = skipShuffle ? [...teams] : _shuffle(teams);
     const totalSlots = _nextPowerOf2(shuffled.length);
     const numRounds = Math.log2(totalSlots);
     const matches = [];

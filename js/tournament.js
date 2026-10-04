@@ -177,15 +177,23 @@ const TournamentManager = (() => {
         if (allGroupDone && koMatches.length === 0) {
           // Transition to Knockout Stage! (Top 2 from each group)
           const groupStandings = getGroupStandings(tournament);
-          const advancingTeams = [];
+          const topSeeds = [];
+          const secondSeeds = [];
           
           Object.values(groupStandings).forEach(standings => {
-            if (standings.length > 0) advancingTeams.push(tournament.teams.find(t => t.id === standings[0].teamId));
-            if (standings.length > 1) advancingTeams.push(tournament.teams.find(t => t.id === standings[1].teamId));
+            if (standings.length > 0) topSeeds.push(tournament.teams.find(t => t.id === standings[0].teamId));
+            if (standings.length > 1) secondSeeds.push(tournament.teams.find(t => t.id === standings[1].teamId));
           });
           
+          const advancingTeams = [];
+          for (let i = 0; i < topSeeds.length; i++) {
+            if (topSeeds[i]) advancingTeams.push(topSeeds[i]);
+            const opponentIdx = (i + 1) % Math.max(secondSeeds.length, 1);
+            if (secondSeeds[opponentIdx]) advancingTeams.push(secondSeeds[opponentIdx]);
+          }
+          
           if (advancingTeams.length > 1) {
-            const newMatches = Bracket.generateSingleElimination(advancingTeams, tournament.matches.length + 1);
+            const newMatches = Bracket.generateSingleElimination(advancingTeams, tournament.matches.length + 1, true);
             tournament.matches.push(...newMatches);
           } else {
             tournament.status = 'completed';
